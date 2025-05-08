@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AIO Analysis Tool Playground
+
+This web application allows users to assess how well their site's `robots.txt` file is optimized for AI-based crawlers, helping them improve their AI optimization strategies.
+
+## Overview
+
+The tool enables users to:
+
+- Input a domain or URL.
+- Fetch and parse the `robots.txt` file of the specified site.
+- Analyze the configuration to determine if the site is optimized for AI crawlers.
+- Receive optimization recommendations to improve site accessibility for AI crawlers.
+
+## Tech Stack
+
+- **Framework**: Next.js
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Library**: React
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v18.x or later recommended)
+- npm or yarn
+
+### Setup
+
+1.  **Clone the repository (if applicable):**
+    ```bash
+    git clone <repository-url>
+    cd profound-fe
+    ```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
+
+### Running the Development Server
+
+Execute the following command to start the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure (Simplified)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+profound-fe/
+├── src/
+│   ├── app/                # Next.js App Router pages
+│   │   ├── layout.tsx
+│   │   └── page.tsx        # Main application page
+│   ├── components/         # Reusable UI components
+│   └── lib/                # Utility functions, API interactions
+├── public/                 # Static assets
+├── .eslintrc.json
+├── next.config.mjs
+├── package.json
+├── README.md
+├── spec.md
+└── tsconfig.json
+```
 
-## Learn More
+## Key Features & Requirements (from spec.md)
 
-To learn more about Next.js, take a look at the following resources:
+### Input & Parsing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- User-friendly input field for domain/URL.
+- Input validation and error handling.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### robots.txt Fetching and Analysis
 
-## Deploy on Vercel
+- Retrieve and parse `robots.txt`.
+- Analyze for AI crawler blocking/allowance.
+- User-friendly permission overview.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Recommendation Engine
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Suggest improvements for `robots.txt` based on analysis.
+- Clear presentation of recommendations.
+
+### User Interface (UI)
+
+- Beautiful, responsive, accessible, and visually engaging.
+- Use React and Next.js.
+- Loading indicators, feedback, and state handling (loading, errors, results).
+
+## Evaluation Criteria (from spec.md)
+
+- **Technical Implementation**: Accurate `robots.txt` parsing and interpretation, real-time fetching.
+- **User Experience (UX)**: Loading states, error handling, visual feedback.
+- **Design**: Clean, consistent, user-friendly UI, accessibility focus.
+- **Code Quality**: Clean, modular, maintainable code, comments, documentation.
+- **Innovation**: Added features or creative design enhancing usability.
