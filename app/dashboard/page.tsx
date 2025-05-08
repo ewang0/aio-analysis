@@ -1,0 +1,488 @@
+"use client"; // Added for client-side hooks
+
+// import { AppSidebar } from "@/components/app-sidebar"; // Removed
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Loader2,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  InfoIcon,
+} from "lucide-react";
+
+interface RuleAnalysis {
+  userAgent: string;
+  isAllowedRoot: boolean | undefined;
+  specificRules: string[];
+}
+
+interface RobotsAnalysisResult {
+  source: string;
+  robotsContent: string;
+  analysis: RuleAnalysis[];
+  sitemap?: string | string[];
+  detailedRecommendations: string[];
+  optimizationScore: number;
+}
+
+export default function Page() {
+  const [url, setUrl] = useState("");
+  const [validationError, setValidationError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [analysisResult, setAnalysisResult] =
+    useState<RobotsAnalysisResult | null>(null);
+  const [apiError, setApiError] = useState("");
+
+  const handleAnalyzeClick = async () => {
+    setValidationError("");
+    setApiError("");
+    setAnalysisResult(null);
+
+    if (!url.trim()) {
+      setValidationError("URL cannot be empty.");
+      return;
+    }
+    try {
+      // Attempt to construct a URL to validate it. Prefixes with http if not present.
+      const prefixedUrl =
+        url.startsWith("http://") || url.startsWith("https://")
+          ? url
+          : `http://${url}`;
+      new URL(prefixedUrl);
+    } catch {
+      setValidationError(
+        "Please enter a valid URL (e.g., http://example.com or example.com)."
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url }), // Send original URL, API will handle prefixing for robots.txt
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setApiError(
+          data.error ||
+            `Failed to analyze. Server responded with ${response.status}`
+        );
+      } else {
+        setAnalysisResult(data as RobotsAnalysisResult);
+      }
+    } catch (err) {
+      const error = err as Error;
+      setApiError(
+        error.message ||
+          "An unexpected error occurred while trying to analyze the URL."
+      );
+      console.error(err);
+    }
+    setIsLoading(false);
+  };
+
+  // Helper to determine color for score
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return "text-green-600 dark:text-green-400";
+    if (score >= 50) return "text-amber-500 dark:text-amber-400";
+    return "text-red-600 dark:text-red-400";
+  };
+
+  const getScoreBgColor = (score: number) => {
+    if (score >= 80) return "bg-green-100 dark:bg-green-900/30";
+    if (score >= 50) return "bg-amber-100 dark:bg-amber-900/30";
+    return "bg-red-100 dark:bg-red-900/30";
+  };
+
+  return (
+    // <SidebarProvider> // Removed
+    //   <AppSidebar /> // Removed
+    //   <SidebarInset> // Removed
+    <>
+      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <div className="flex items-center gap-2 px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 data-[orientation=vertical]:h-4"
+          />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="#">Tools</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>AIO Analyzer</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      </header>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="w-full space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">AIO Analysis Tool</CardTitle>
+              <CardDescription>
+                Enter a domain or URL to analyze its robots.txt for AI crawler
+                optimization.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row gap-4 items-start">
+                <div className="flex-grow w-full sm:w-auto">
+                  <Input
+                    type="url"
+                    value={url}
+                    onChange={(e) => {
+                      setUrl(e.target.value);
+                      if (validationError) setValidationError("");
+                      if (apiError) setApiError("");
+                    }}
+                    placeholder="Enter domain or URL (e.g., example.com)"
+                    className={`${
+                      validationError
+                        ? "border-red-500 focus-visible:ring-red-500"
+                        : ""
+                    }`}
+                    aria-label="Domain or URL input"
+                    aria-invalid={!!validationError}
+                    aria-describedby={
+                      validationError ? "url-error-message" : undefined
+                    }
+                    disabled={isLoading}
+                  />
+                  {validationError && (
+                    <p
+                      id="url-error-message"
+                      className="text-sm text-red-500 mt-1.5"
+                    >
+                      {validationError}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  onClick={handleAnalyzeClick}
+                  disabled={isLoading}
+                  className="w-full sm:w-auto"
+                >
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {isLoading ? "Analyzing..." : "Analyze"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {isLoading && (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-center text-muted-foreground">
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Loading robots.txt content and analyzing...
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {apiError && (
+            <Alert variant="destructive">
+              <XCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{apiError}</AlertDescription>
+            </Alert>
+          )}
+
+          {analysisResult && (
+            <div className="space-y-6">
+              <Card className="shadow-md">
+                <CardHeader>
+                  <CardTitle>Analysis Overview</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                      Robots.txt AI Optimization Score
+                    </h3>
+                    <div
+                      className={`p-6 rounded-lg text-center ${getScoreBgColor(
+                        analysisResult.optimizationScore
+                      )}`}
+                    >
+                      <span
+                        className={`text-6xl font-bold ${getScoreColor(
+                          analysisResult.optimizationScore
+                        )}`}
+                      >
+                        {analysisResult.optimizationScore}
+                      </span>
+                      <span
+                        className={`text-2xl ${getScoreColor(
+                          analysisResult.optimizationScore
+                        )}`}
+                      >
+                        {" "}
+                        / 100
+                      </span>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-3">
+                      Crawler Access Details
+                    </h3>
+                    <div className="rounded-md border">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>User-Agent</TableHead>
+                            <TableHead>Root Access (/)?</TableHead>
+                            <TableHead className="hidden sm:table-cell">
+                              Specific Rules
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {analysisResult.analysis.map((rule) => (
+                            <TableRow key={rule.userAgent}>
+                              <TableCell className="font-medium">
+                                {rule.userAgent}
+                              </TableCell>
+                              <TableCell
+                                className={`${
+                                  rule.isAllowedRoot === false
+                                    ? "text-red-600 dark:text-red-400"
+                                    : rule.isAllowedRoot === true
+                                    ? "text-green-600 dark:text-green-400"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {rule.isAllowedRoot === undefined
+                                  ? "Implicitly Allowed"
+                                  : rule.isAllowedRoot
+                                  ? "Allowed"
+                                  : "Disallowed"}
+                              </TableCell>
+                              <TableCell className="hidden sm:table-cell">
+                                {rule.specificRules.length > 0 ? (
+                                  <pre className="text-xs bg-muted p-2 rounded whitespace-pre-wrap break-all font-mono">
+                                    {rule.specificRules.join("\n")}
+                                  </pre>
+                                ) : (
+                                  <em className="text-muted-foreground">
+                                    No specific rules.
+                                  </em>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  {analysisResult.sitemap && (
+                    <>
+                      <Separator />
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground mb-2">
+                          Sitemap(s) Found
+                        </h3>
+                        <div className="p-3 bg-muted rounded-md text-sm">
+                          {Array.isArray(analysisResult.sitemap) ? (
+                            analysisResult.sitemap.map((s, i) => (
+                              <a
+                                href={s}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                key={i}
+                                className="block text-primary hover:underline"
+                              >
+                                {s}
+                              </a>
+                            ))
+                          ) : (
+                            <a
+                              href={analysisResult.sitemap}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-primary hover:underline"
+                            >
+                              {analysisResult.sitemap}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  <Separator />
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                      Raw robots.txt Content
+                    </h3>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Fetched from:{" "}
+                      <a
+                        href={analysisResult.source}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {analysisResult.source}
+                      </a>
+                    </p>
+                    {analysisResult.robotsContent ? (
+                      <pre className="whitespace-pre-wrap break-all bg-muted p-3 rounded-md text-sm font-mono max-h-60 overflow-auto">
+                        {analysisResult.robotsContent}
+                      </pre>
+                    ) : (
+                      <Alert>
+                        <InfoIcon className="h-4 w-4" />
+                        <AlertDescription className="text-muted-foreground">
+                          robots.txt is empty or was not found (default allow
+                          assumed).
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-md">
+                <CardHeader>
+                  <CardTitle>Optimization Recommendations</CardTitle>
+                  <CardDescription>
+                    Based on the robots.txt analysis for AI crawlers.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {analysisResult.detailedRecommendations &&
+                  analysisResult.detailedRecommendations.length > 0 ? (
+                    <ul className="space-y-3">
+                      {analysisResult.detailedRecommendations.map(
+                        (rec, index) => {
+                          let iconColorClass = "text-blue-500";
+                          let IconComponent = InfoIcon;
+                          let alertTitle = "Recommendation";
+                          let effectiveAlertVariant:
+                            | "default"
+                            | "destructive"
+                            | undefined = undefined;
+
+                          if (
+                            rec.toLowerCase().includes("good") ||
+                            rec.toLowerCase().includes("excellent") ||
+                            rec.toLowerCase().includes("allowed")
+                          ) {
+                            iconColorClass = "text-green-500";
+                            IconComponent = CheckCircle2;
+                            alertTitle = "Good Practice";
+                          } else if (
+                            rec.toLowerCase().includes("consider") ||
+                            rec.toLowerCase().includes("warning")
+                          ) {
+                            iconColorClass = "text-amber-500";
+                            IconComponent = AlertTriangle;
+                            alertTitle = "Consideration";
+                          } else if (
+                            rec.toLowerCase().includes("disallowed") ||
+                            rec.toLowerCase().includes("prevent")
+                          ) {
+                            iconColorClass = "text-red-500";
+                            IconComponent = XCircle;
+                            alertTitle = "Action Required";
+                            effectiveAlertVariant = "destructive";
+                          }
+
+                          const finalIconClassName = `h-5 w-5 flex-shrink-0 ${iconColorClass}`;
+
+                          return (
+                            <li key={index}>
+                              <Alert
+                                variant={effectiveAlertVariant}
+                                className="items-start p-4"
+                              >
+                                <IconComponent className={finalIconClassName} />
+                                <div className="ml-3 flex-1">
+                                  <AlertTitle className="font-semibold">
+                                    {alertTitle}
+                                  </AlertTitle>
+                                  <AlertDescription className="mt-1 text-sm text-muted-foreground">
+                                    {rec}
+                                  </AlertDescription>
+                                </div>
+                              </Alert>
+                            </li>
+                          );
+                        }
+                      )}
+                    </ul>
+                  ) : (
+                    <Alert>
+                      <InfoIcon className="h-4 w-4" />
+                      <AlertDescription className="text-muted-foreground">
+                        No specific recommendations at this time. Your
+                        robots.txt seems well-configured for the checked AI
+                        crawlers or no analysis was performed.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {!isLoading && !apiError && !analysisResult && (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-center text-muted-foreground">
+                  Enter a URL above and click Analyze to see the results.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </>
+    //   </SidebarInset> // Removed
+    // </SidebarProvider> // Removed
+  );
+}
