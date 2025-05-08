@@ -2,8 +2,6 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  Command,
   Frame,
   GalleryVerticalEnd,
   Map,
@@ -57,7 +55,7 @@ const data = {
       icon: PieChart,
     },
     {
-      name: "Travel",
+      name: "Placeholder",
       url: "#",
       icon: Map,
     },

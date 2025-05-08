@@ -1,7 +1,65 @@
 import { NextRequest, NextResponse } from "next/server";
 import robotsParser from "robots-parser";
 
-const AI_CRAWLERS = ["GPTBot", "Google-Extended", "CCBot"];
+const AI_CRAWLERS = [
+  "AI2Bot",
+  "Ai2Bot-Dolma",
+  "aiHitBot",
+  "Amazonbot",
+  "anthropic-ai",
+  "Applebot",
+  "Applebot-Extended",
+  "Brightbot 1.0",
+  "Bytespider",
+  "CCBot",
+  "ChatGPT-User",
+  "Claude-Web",
+  "ClaudeBot",
+  "cohere-ai",
+  "cohere-training-data-crawler",
+  "Cotoyogi",
+  "Crawlspace",
+  "Diffbot",
+  "DuckAssistBot",
+  "FacebookBot",
+  "Factset_spyderbot",
+  "FirecrawlAgent",
+  "FriendlyCrawler",
+  "Google-Extended",
+  "GoogleOther",
+  "GoogleOther-Image",
+  "GoogleOther-Video",
+  "GPTBot",
+  "iaskspider/2.0",
+  "ICC-Crawler",
+  "ImagesiftBot",
+  "img2dataset",
+  "imgproxy",
+  "ISSCyberRiskCrawler",
+  "Kangaroo Bot",
+  "meta-externalagent",
+  "Meta-ExternalAgent",
+  "meta-externalfetcher",
+  "Meta-ExternalFetcher",
+  "NovaAct",
+  "OAI-SearchBot",
+  "omgili",
+  "omgilibot",
+  "Operator",
+  "PanguBot",
+  "Perplexity-User",
+  "PerplexityBot",
+  "PetalBot",
+  "Scrapy",
+  "SemrushBot-OCOB",
+  "SemrushBot-SWA",
+  "Sidetrade indexer bot",
+  "TikTokSpider",
+  "Timpibot",
+  "VelenPublicWebCrawler",
+  "Webzio-Extended",
+  "YouBot",
+];
 
 interface RuleAnalysis {
   userAgent: string;
@@ -44,9 +102,7 @@ function generateDetailedRecommendations(
           );
           score -= 20; // Penalty for general disallow affecting AI bot
         } else {
-          recommendations.push(
-            `${crawler} appears to be allowed access (implicitly or explicitly). Good!`
-          );
+          recommendations.push(`${crawler} appears to be allowed access`);
         }
       } else {
         recommendations.push(
@@ -118,7 +174,7 @@ function generateDetailedRecommendations(
     );
     score -= 10;
   } else {
-    recommendations.push(`Sitemap(s) found: ${sitemaps.join(", ")}. Good!`);
+    recommendations.push(`Sitemap(s) found: ${sitemaps.join(", ")}.`);
   }
 
   score = Math.max(0, Math.min(100, score)); // Clamp score between 0 and 100

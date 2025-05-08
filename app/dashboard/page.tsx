@@ -1,6 +1,5 @@
-"use client"; // Added for client-side hooks
+"use client";
 
-// import { AppSidebar } from "@/components/app-sidebar"; // Removed
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -38,6 +37,8 @@ import {
   InfoIcon,
 } from "lucide-react";
 import CircularProgressScore from "@/components/ui/circular-progress-score";
+import DashboardSkeleton from "@/components/ui/dashboard-skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface RuleAnalysis {
   userAgent: string;
@@ -117,9 +118,6 @@ export default function Page() {
   };
 
   return (
-    // <SidebarProvider> // Removed
-    //   <AppSidebar /> // Removed
-    //   <SidebarInset> // Removed
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2 px-4">
@@ -135,14 +133,14 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>AIO Analyzer</BreadcrumbPage>
+                <BreadcrumbPage>AIO Analysis</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="w-full space-y-4">
+        <div className="w-full h-full space-y-4 flex flex-col">
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">AIO Analysis Tool</CardTitle>
@@ -161,6 +159,12 @@ export default function Page() {
                       setUrl(e.target.value);
                       if (validationError) setValidationError("");
                       if (apiError) setApiError("");
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !isLoading) {
+                        e.preventDefault();
+                        handleAnalyzeClick();
+                      }
                     }}
                     placeholder="Enter domain or URL (e.g., example.com)"
                     className={`${
@@ -198,16 +202,7 @@ export default function Page() {
             </CardContent>
           </Card>
 
-          {isLoading && (
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-center text-muted-foreground">
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Loading robots.txt content and analyzing...
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {isLoading && <DashboardSkeleton />}
 
           {apiError && (
             <Alert variant="destructive">
@@ -222,13 +217,28 @@ export default function Page() {
               <Card className="shadow-md xl:w-1/2">
                 <CardHeader>
                   <CardTitle>Analysis Overview</CardTitle>
+                  <CardDescription>
+                    Summary of your robots.txt configuration for AI crawlers,
+                    including access permissions, optimization score, and
+                    recommendations for improving crawler management.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2">
-                      Robots.txt AI Optimization Score
-                    </h3>
-                    <div className="py-6">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-semibold text-foreground">
+                        Robots.txt AI Optimization Score
+                      </h3>
+                      <div className="relative group">
+                        <InfoIcon className="h-4 w-4 text-muted-foreground cursor-help" />
+                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-popover text-popover-foreground p-2 rounded shadow-md text-sm w-64 z-50">
+                          This score represents how well your robots.txt is
+                          optimized for AI crawlers. Higher scores indicate
+                          better configuration for controlling AI bot access.
+                        </div>
+                      </div>
+                    </div>
+                    <div className="pt-4">
                       <CircularProgressScore
                         score={analysisResult.optimizationScore}
                       />
@@ -241,7 +251,7 @@ export default function Page() {
                     <h3 className="text-lg font-semibold text-foreground mb-3">
                       Crawler Access Details
                     </h3>
-                    <div className="rounded-md border">
+                    <div className="rounded-md border max-h-84 overflow-y-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -330,7 +340,7 @@ export default function Page() {
                     <h3 className="text-lg font-semibold text-foreground mb-2">
                       Raw robots.txt Content
                     </h3>
-                    <p className="text-xs text-muted-foreground mb-1">
+                    <p className="text-xs text-muted-foreground mb-4">
                       Fetched from:{" "}
                       <a
                         href={analysisResult.source}
@@ -368,73 +378,120 @@ export default function Page() {
                 <CardContent>
                   {analysisResult.detailedRecommendations &&
                   analysisResult.detailedRecommendations.length > 0 ? (
-                    <ul className="space-y-3">
-                      {analysisResult.detailedRecommendations.map(
-                        (rec, index) => {
-                          let iconColorClass = "text-blue-500";
-                          let iconBgColorClass = "bg-blue-50";
-                          let iconBorderColorClass = "border-blue-200";
-                          let IconComponent = InfoIcon;
-                          let alertTitle = "Recommendation";
-                          let effectiveAlertVariant:
-                            | "default"
-                            | "destructive"
-                            | undefined = undefined;
+                    (() => {
+                      const getPriority = (rec: string) => {
+                        if (
+                          rec.toLowerCase().includes("disallowed") ||
+                          rec.toLowerCase().includes("prevent")
+                        ) {
+                          return 1; // Action Required
+                        } else if (
+                          rec.toLowerCase().includes("consider") ||
+                          rec.toLowerCase().includes("warning")
+                        ) {
+                          return 2; // Consideration
+                        } else if (
+                          rec.toLowerCase().includes("good") ||
+                          rec.toLowerCase().includes("excellent") ||
+                          rec.toLowerCase().includes("allowed")
+                        ) {
+                          return 3; // Good Practice
+                        }
+                        return 4; // Others
+                      };
 
-                          if (
-                            rec.toLowerCase().includes("good") ||
-                            rec.toLowerCase().includes("excellent") ||
-                            rec.toLowerCase().includes("allowed")
-                          ) {
-                            iconColorClass = "#10b981"; // green-500
-                            iconBgColorClass = "bg-green-50";
-                            iconBorderColorClass = "border-green-200";
-                            IconComponent = CheckCircle2;
-                            alertTitle = "Good Practice";
-                          } else if (
-                            rec.toLowerCase().includes("consider") ||
-                            rec.toLowerCase().includes("warning")
-                          ) {
-                            iconColorClass = "#f59e0b"; // amber-500
-                            iconBgColorClass = "bg-amber-50";
-                            iconBorderColorClass = "border-amber-200";
-                            IconComponent = AlertTriangle;
-                            alertTitle = "Consideration";
-                          } else if (
-                            rec.toLowerCase().includes("disallowed") ||
-                            rec.toLowerCase().includes("prevent")
-                          ) {
-                            iconColorClass = "#ef4444"; // red-500
-                            iconBgColorClass = "bg-red-50";
-                            iconBorderColorClass = "border-red-200";
-                            IconComponent = XCircle;
-                            alertTitle = "Action Required";
-                            effectiveAlertVariant = "destructive";
-                          }
+                      const sortedRecs = analysisResult.detailedRecommendations
+                        .slice()
+                        .sort((a, b) => getPriority(a) - getPriority(b));
 
-                          return (
-                            <li key={index}>
-                              <Alert
-                                variant={effectiveAlertVariant}
-                                className={`items-start p-4 ${iconBgColorClass} border ${iconBorderColorClass}`}
-                              >
-                                <IconComponent color={iconColorClass} />
+                      const goodPracticeRecs = sortedRecs.filter(
+                        (rec) => getPriority(rec) === 3
+                      );
+                      const otherRecs = sortedRecs.filter(
+                        (rec) => getPriority(rec) !== 3
+                      );
+
+                      return (
+                        <ul className="space-y-3">
+                          {otherRecs.map((rec, index) => {
+                            let iconColorClass = "#3b82f6"; // blue-500
+                            let IconComponent = InfoIcon;
+                            let alertTitle = "Additional Notes";
+                            let effectiveAlertVariant:
+                              | "default"
+                              | "destructive"
+                              | undefined = undefined;
+
+                            if (getPriority(rec) === 1) {
+                              // Action Required
+                              iconColorClass = "#f43f5e"; // rose-500
+                              IconComponent = XCircle;
+                              alertTitle = "Action Required";
+                              effectiveAlertVariant = "destructive";
+                            } else if (getPriority(rec) === 2) {
+                              // Consideration
+                              iconColorClass = "#f59e0b"; // amber-500
+                              IconComponent = AlertTriangle;
+                              alertTitle = "Consideration";
+                            }
+                            // Default for priority 4 or any other cases
+
+                            return (
+                              <li key={`other-${index}`}>
+                                <Alert
+                                  variant={effectiveAlertVariant}
+                                  className="items-start p-4 border"
+                                >
+                                  <IconComponent
+                                    className="mt-0.5 h-5 w-5"
+                                    style={{ color: iconColorClass }}
+                                  />
+                                  <div className="ml-3 flex-1">
+                                    <AlertTitle
+                                      className="font-semibold"
+                                      style={{ color: iconColorClass }}
+                                    >
+                                      {alertTitle}
+                                    </AlertTitle>
+                                    <AlertDescription className="mt-1 text-sm text-muted-foreground">
+                                      {rec}
+                                    </AlertDescription>
+                                  </div>
+                                </Alert>
+                              </li>
+                            );
+                          })}
+
+                          {goodPracticeRecs.length > 0 && (
+                            <li key="good-practices">
+                              <Alert className="items-start p-4 border">
+                                <CheckCircle2
+                                  className="mt-0.5 h-5 w-5"
+                                  style={{ color: "#14b8a6" }} // teal-500
+                                />
                                 <div className="ml-3 flex-1">
                                   <AlertTitle
-                                    className={`font-semibold ${iconColorClass}`}
+                                    className="font-semibold"
+                                    style={{ color: "#14b8a6" }}
                                   >
-                                    {alertTitle}
+                                    Good Practices
                                   </AlertTitle>
                                   <AlertDescription className="mt-1 text-sm text-muted-foreground">
-                                    {rec}
+                                    <ScrollArea className="h-full w-full">
+                                      <ul className="list-disc pl-5 space-y-1 pr-4">
+                                        {goodPracticeRecs.map((rec, i) => (
+                                          <li key={`gp-${i}`}>{rec}</li>
+                                        ))}
+                                      </ul>
+                                    </ScrollArea>
                                   </AlertDescription>
                                 </div>
                               </Alert>
                             </li>
-                          );
-                        }
-                      )}
-                    </ul>
+                          )}
+                        </ul>
+                      );
+                    })()
                   ) : (
                     <Alert>
                       <InfoIcon className="h-4 w-4" />
@@ -451,8 +508,14 @@ export default function Page() {
           )}
 
           {!isLoading && !apiError && !analysisResult && (
-            <Card>
-              <CardContent className="pt-6">
+            <Card className="flex-1 border-dotted border-2 border-border flex flex-col">
+              <CardContent className="pt-6 flex-1 flex items-center justify-center flex-col">
+                <div className="bg-neutral-800 p-3 rounded-full mb-4 flex items-center justify-center">
+                  <InfoIcon className="h-10 w-10 text-neutral-600" />
+                </div>
+                <h2 className="text-2xl font-semibold text-foreground mb-2">
+                  No Results Yet
+                </h2>
                 <p className="text-center text-muted-foreground">
                   Enter a URL above and click Analyze to see the results.
                 </p>
@@ -462,7 +525,5 @@ export default function Page() {
         </div>
       </div>
     </>
-    //   </SidebarInset> // Removed
-    // </SidebarProvider> // Removed
   );
 }
