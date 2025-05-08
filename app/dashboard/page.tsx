@@ -37,6 +37,7 @@ import {
   XCircle,
   InfoIcon,
 } from "lucide-react";
+import CircularProgressScore from "@/components/ui/circular-progress-score";
 
 interface RuleAnalysis {
   userAgent: string;
@@ -115,19 +116,6 @@ export default function Page() {
     setIsLoading(false);
   };
 
-  // Helper to determine color for score
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600 dark:text-green-400";
-    if (score >= 50) return "text-amber-500 dark:text-amber-400";
-    return "text-red-600 dark:text-red-400";
-  };
-
-  const getScoreBgColor = (score: number) => {
-    if (score >= 80) return "bg-green-100 dark:bg-green-900/30";
-    if (score >= 50) return "bg-amber-100 dark:bg-amber-900/30";
-    return "bg-red-100 dark:bg-red-900/30";
-  };
-
   return (
     // <SidebarProvider> // Removed
     //   <AppSidebar /> // Removed
@@ -154,7 +142,7 @@ export default function Page() {
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="w-full space-y-6">
+        <div className="w-full space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">AIO Analysis Tool</CardTitle>
@@ -230,8 +218,8 @@ export default function Page() {
           )}
 
           {analysisResult && (
-            <div className="space-y-6">
-              <Card className="shadow-md">
+            <div className="space-y-4 xl:flex xl:flex-row xl:space-y-0 xl:space-x-4">
+              <Card className="shadow-md xl:w-1/2">
                 <CardHeader>
                   <CardTitle>Analysis Overview</CardTitle>
                 </CardHeader>
@@ -240,26 +228,10 @@ export default function Page() {
                     <h3 className="text-lg font-semibold text-foreground mb-2">
                       Robots.txt AI Optimization Score
                     </h3>
-                    <div
-                      className={`p-6 rounded-lg text-center ${getScoreBgColor(
-                        analysisResult.optimizationScore
-                      )}`}
-                    >
-                      <span
-                        className={`text-6xl font-bold ${getScoreColor(
-                          analysisResult.optimizationScore
-                        )}`}
-                      >
-                        {analysisResult.optimizationScore}
-                      </span>
-                      <span
-                        className={`text-2xl ${getScoreColor(
-                          analysisResult.optimizationScore
-                        )}`}
-                      >
-                        {" "}
-                        / 100
-                      </span>
+                    <div className="py-6">
+                      <CircularProgressScore
+                        score={analysisResult.optimizationScore}
+                      />
                     </div>
                   </div>
 
@@ -283,7 +255,7 @@ export default function Page() {
                         <TableBody>
                           {analysisResult.analysis.map((rule) => (
                             <TableRow key={rule.userAgent}>
-                              <TableCell className="font-medium">
+                              <TableCell className="font-medium align-top">
                                 {rule.userAgent}
                               </TableCell>
                               <TableCell
@@ -293,7 +265,7 @@ export default function Page() {
                                     : rule.isAllowedRoot === true
                                     ? "text-green-600 dark:text-green-400"
                                     : "text-muted-foreground"
-                                }`}
+                                } align-top`}
                               >
                                 {rule.isAllowedRoot === undefined
                                   ? "Implicitly Allowed"
@@ -301,7 +273,7 @@ export default function Page() {
                                   ? "Allowed"
                                   : "Disallowed"}
                               </TableCell>
-                              <TableCell className="hidden sm:table-cell">
+                              <TableCell className="hidden sm:table-cell align-top">
                                 {rule.specificRules.length > 0 ? (
                                   <pre className="text-xs bg-muted p-2 rounded whitespace-pre-wrap break-all font-mono">
                                     {rule.specificRules.join("\n")}
@@ -386,7 +358,7 @@ export default function Page() {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-md">
+              <Card className="shadow-md xl:w-1/2">
                 <CardHeader>
                   <CardTitle>Optimization Recommendations</CardTitle>
                   <CardDescription>
@@ -400,6 +372,8 @@ export default function Page() {
                       {analysisResult.detailedRecommendations.map(
                         (rec, index) => {
                           let iconColorClass = "text-blue-500";
+                          let iconBgColorClass = "bg-blue-50";
+                          let iconBorderColorClass = "border-blue-200";
                           let IconComponent = InfoIcon;
                           let alertTitle = "Recommendation";
                           let effectiveAlertVariant:
@@ -412,37 +386,43 @@ export default function Page() {
                             rec.toLowerCase().includes("excellent") ||
                             rec.toLowerCase().includes("allowed")
                           ) {
-                            iconColorClass = "text-green-500";
+                            iconColorClass = "#10b981"; // green-500
+                            iconBgColorClass = "bg-green-50";
+                            iconBorderColorClass = "border-green-200";
                             IconComponent = CheckCircle2;
                             alertTitle = "Good Practice";
                           } else if (
                             rec.toLowerCase().includes("consider") ||
                             rec.toLowerCase().includes("warning")
                           ) {
-                            iconColorClass = "text-amber-500";
+                            iconColorClass = "#f59e0b"; // amber-500
+                            iconBgColorClass = "bg-amber-50";
+                            iconBorderColorClass = "border-amber-200";
                             IconComponent = AlertTriangle;
                             alertTitle = "Consideration";
                           } else if (
                             rec.toLowerCase().includes("disallowed") ||
                             rec.toLowerCase().includes("prevent")
                           ) {
-                            iconColorClass = "text-red-500";
+                            iconColorClass = "#ef4444"; // red-500
+                            iconBgColorClass = "bg-red-50";
+                            iconBorderColorClass = "border-red-200";
                             IconComponent = XCircle;
                             alertTitle = "Action Required";
                             effectiveAlertVariant = "destructive";
                           }
 
-                          const finalIconClassName = `h-5 w-5 flex-shrink-0 ${iconColorClass}`;
-
                           return (
                             <li key={index}>
                               <Alert
                                 variant={effectiveAlertVariant}
-                                className="items-start p-4"
+                                className={`items-start p-4 ${iconBgColorClass} border ${iconBorderColorClass}`}
                               >
-                                <IconComponent className={finalIconClassName} />
+                                <IconComponent color={iconColorClass} />
                                 <div className="ml-3 flex-1">
-                                  <AlertTitle className="font-semibold">
+                                  <AlertTitle
+                                    className={`font-semibold ${iconColorClass}`}
+                                  >
                                     {alertTitle}
                                   </AlertTitle>
                                   <AlertDescription className="mt-1 text-sm text-muted-foreground">
