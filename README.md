@@ -11,12 +11,14 @@ The tool enables users to:
 - Analyze the configuration to determine if the site is optimized for AI crawlers.
 - Receive optimization recommendations to improve site accessibility for AI crawlers.
 
-## Tech Stack
+## Core Technologies & Libraries
 
-- **Framework**: Next.js
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Library**: React
+This project is built with a modern web stack:
+
+- **Framework**: [Next.js](https://nextjs.org/) (using the App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Library**: [React](https://reactjs.org/)
 
 ## Getting Started
 
@@ -30,7 +32,7 @@ The tool enables users to:
 1.  **Clone the repository (if applicable):**
     ```bash
     git clone <repository-url>
-    cd profound-fe
+    cd <repository-url>
     ```
 2.  **Install dependencies:**
     ```bash
@@ -51,12 +53,44 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-## Project Structure (Simplified)
+## Architecture Overview
+
+This project is built using Next.js and its App Router, emphasizing a structured and maintainable codebase. The architecture revolves around the following key areas:
+
+**1. Next.js App Router (`src/app/`)**:
+
+- The core of the application's routing and page structure resides here.
+- `layout.tsx`: Defines the main layout applied across the application.
+- `page.tsx`: Represents the entry point and primary UI for the main application page.
+- Leverages Next.js features for Server Components, Client Components, and efficient data fetching patterns.
+
+**2. Reusable UI Components (`src/components/`)**:
+
+- This directory contains all custom React components designed for reusability across different parts of the application.
+- Promotes a consistent look and feel, and simplifies development by breaking down the UI into smaller, manageable pieces.
+
+**3. Shared Logic and Utilities (`src/lib/`)**:
+
+- Houses utility functions, API interaction logic (e.g., for fetching and parsing `robots.txt`), custom hooks, and TypeScript type definitions.
+- Centralizes common functionalities, making them easily accessible and maintainable.
+
+**4. Static Assets (`public/`)**:
+
+- Contains static files like images, fonts, and other assets that are served directly by the web server.
+
+**5. Configuration**:
+
+- `next.config.mjs`: Manages Next.js specific configurations.
+- `tsconfig.json`: Configures the TypeScript compiler.
+- `package.json`: Lists project dependencies and defines runnable scripts.
+- `.eslintrc.json`: Enforces code style and quality using ESLint.
+
+**Simplified Project Structure:**
 
 ```
 profound-fe/
 ├── src/
-│   ├── app/                # Next.js App Router pages
+│   ├── app/                # Next.js App Router: routes, pages, layouts
 │   │   ├── layout.tsx
 │   │   └── page.tsx        # Main application page
 │   ├── components/         # Reusable UI components
@@ -69,35 +103,3 @@ profound-fe/
 ├── spec.md
 └── tsconfig.json
 ```
-
-## Key Features & Requirements (from spec.md)
-
-### Input & Parsing
-
-- User-friendly input field for domain/URL.
-- Input validation and error handling.
-
-### robots.txt Fetching and Analysis
-
-- Retrieve and parse `robots.txt`.
-- Analyze for AI crawler blocking/allowance.
-- User-friendly permission overview.
-
-### Recommendation Engine
-
-- Suggest improvements for `robots.txt` based on analysis.
-- Clear presentation of recommendations.
-
-### User Interface (UI)
-
-- Beautiful, responsive, accessible, and visually engaging.
-- Use React and Next.js.
-- Loading indicators, feedback, and state handling (loading, errors, results).
-
-## Evaluation Criteria (from spec.md)
-
-- **Technical Implementation**: Accurate `robots.txt` parsing and interpretation, real-time fetching.
-- **User Experience (UX)**: Loading states, error handling, visual feedback.
-- **Design**: Clean, consistent, user-friendly UI, accessibility focus.
-- **Code Quality**: Clean, modular, maintainable code, comments, documentation.
-- **Innovation**: Added features or creative design enhancing usability.
