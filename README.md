@@ -63,19 +63,19 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 This project is built using Next.js and its App Router, emphasizing a structured and maintainable codebase. The architecture revolves around the following key areas:
 
-**1. Next.js App Router (`src/app/`)**:
+**1. Next.js App Router (`app/`)**:
 
 - The core of the application's routing and page structure resides here.
 - `layout.tsx`: Defines the main layout applied across the application.
 - `page.tsx`: Represents the entry point and primary UI for the main application page.
 - Leverages Next.js features for Server Components, Client Components, and efficient data fetching patterns.
 
-**2. Reusable UI Components (`src/components/`)**:
+**2. Reusable UI Components (`components/`)**:
 
 - This directory contains all custom React components designed for reusability across different parts of the application.
 - Promotes a consistent look and feel, and simplifies development by breaking down the UI into smaller, manageable pieces.
 
-**3. Shared Logic and Utilities (`src/lib/`)**:
+**3. Shared Logic and Utilities (`lib/`)**:
 
 - Houses utility functions, API interaction logic (e.g., for fetching and parsing `robots.txt`), custom hooks, and TypeScript type definitions.
 - Centralizes common functionalities, making them easily accessible and maintainable.
@@ -84,28 +84,3 @@ This project is built using Next.js and its App Router, emphasizing a structured
 
 - Contains static files like images, fonts, and other assets that are served directly by the web server.
 
-**5. Configuration**:
-
-- `next.config.mjs`: Manages Next.js specific configurations.
-- `tsconfig.json`: Configures the TypeScript compiler.
-- `package.json`: Lists project dependencies and defines runnable scripts.
-- `.eslintrc.json`: Enforces code style and quality using ESLint.
-
-**Simplified Project Structure:**
-
-```
-profound-fe/
-├── src/
-│   ├── app/                # Next.js App Router: routes, pages, layouts
-│   │   ├── layout.tsx
-│   │   └── page.tsx        # Main application page
-│   ├── components/         # Reusable UI components
-│   └── lib/                # Utility functions, API interactions
-├── public/                 # Static assets
-├── .eslintrc.json
-├── next.config.mjs
-├── package.json
-├── README.md
-├── spec.md
-└── tsconfig.json
-```
