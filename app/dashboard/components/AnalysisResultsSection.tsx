@@ -6,7 +6,7 @@ import DashboardSkeleton from "@/components/ui/dashboard-skeleton";
 import { XCircle, InfoIcon } from "lucide-react";
 import { RobotsAnalysisResult } from "../types";
 import AnalysisOverviewCard from "./AnalysisOverviewCard";
-import OptimizationRecommendationsCard from "./OptimizationRecommendationsCard";
+import RecommendationsCard from "./RecommendationsCard";
 
 interface AnalysisResultsSectionProps {
   isLoading: boolean;
@@ -37,7 +37,7 @@ export default function AnalysisResultsSection({
     return (
       <div className="space-y-4 xl:flex xl:flex-row xl:space-y-0 xl:space-x-4">
         <AnalysisOverviewCard analysisResult={analysisResult} />
-        <OptimizationRecommendationsCard analysisResult={analysisResult} />
+        <RecommendationsCard analysisResult={analysisResult} />
       </div>
     );
   }

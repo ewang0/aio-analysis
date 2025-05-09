@@ -12,13 +12,13 @@ import { InfoIcon, XCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RobotsAnalysisResult } from "../types";
 
-interface OptimizationRecommendationsCardProps {
+interface RecommendationsCardProps {
   analysisResult: RobotsAnalysisResult;
 }
 
-export default function OptimizationRecommendationsCard({
+export default function RecommendationsCard({
   analysisResult,
-}: OptimizationRecommendationsCardProps) {
+}: RecommendationsCardProps) {
   return (
     <Card className="shadow-md xl:w-1/2">
       <CardHeader>
