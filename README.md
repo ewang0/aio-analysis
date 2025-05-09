@@ -26,6 +26,49 @@ This project is built with a modern web stack:
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Library**: [React](https://reactjs.org/)
 
+## Robots.txt Analysis Criteria
+
+The application evaluates robots.txt files based on a comprehensive set of criteria to determine AI crawler friendliness. The analysis examines:
+
+**1. Accessibility & Format**:
+
+- Validates that the robots.txt file is accessible (returns 200 OK)
+- Ensures the file size is reasonable (<512 KB)
+- Checks for proper UTF-8 encoding
+
+**2. AI User-Agent Recognition**:
+
+- Identifies specific AI crawler user-agents including:
+  - GPTBot (OpenAI)
+  - ClaudeBot (Anthropic)
+  - PerplexityBot
+  - Google-Extended
+  - ccbot (Common Crawl)
+  - YouBot
+- Evaluates whether these crawlers are explicitly allowed or disallowed
+
+**3. Rule Structure & Consistency**:
+
+- Checks for global disallow rules (`User-agent: * Disallow: /`)
+- Analyzes rule precedence to identify conflicts between Allow and Disallow directives
+- Detects problematic wildcard patterns that could cause issues
+
+**4. Additional Features**:
+
+- Identifies presence of Sitemap directives and validates their URLs
+- Checks for Crawl-delay directives (which are generally discouraged)
+
+**5. Scoring System**:
+The analysis produces a score (0-100) based on:
+
+- Accessibility (40 points): File availability and reasonable size
+- AI Allowance (30 points): Proper configuration for AI crawlers
+- Syntax Hygiene (15 points): Proper formatting and directive usage
+- Sitemaps (10 points): Presence of valid sitemap declarations
+- Conflict Avoidance (5 points): Clean precedence rules
+
+The analysis results include detailed recommendations for optimizing robots.txt configuration specifically for AI crawlers, helping site owners make informed decisions about content accessibility.
+
 ## Getting Started
 
 ### Prerequisites
