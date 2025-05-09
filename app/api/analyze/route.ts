@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     const {
       recommendations: detailedRecommendations,
       score: optimizationScore,
-    } = generateDetailedRecommendations(analysisData, sitemaps);
+    } = generateDetailedRecommendations(analysisData, sitemaps, robotsContent);
 
     // If there was a fetch error but we proceeded (e.g. HTML content), add it to recommendations.
     if (fetchError) {

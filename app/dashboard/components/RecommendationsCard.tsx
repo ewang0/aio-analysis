@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon, XCircle, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { RobotsAnalysisResult } from "../types";
 
 interface RecommendationsCardProps {
@@ -65,6 +64,28 @@ export default function RecommendationsCard({
 
             return (
               <ul className="space-y-3">
+                {goodPracticeRecs.map((rec, i) => (
+                  <li key={`good-practice-${i}`}>
+                    <Alert className="items-start p-4 border">
+                      <CheckCircle2
+                        className="mt-0.5 h-5 w-5"
+                        style={{ color: "#14b8a6" }} // teal-500
+                      />
+                      <div className="ml-3 flex-1">
+                        <AlertTitle
+                          className="font-semibold"
+                          style={{ color: "#14b8a6" }}
+                        >
+                          Good Practice
+                        </AlertTitle>
+                        <AlertDescription className="mt-1 text-sm text-muted-foreground">
+                          {rec}
+                        </AlertDescription>
+                      </div>
+                    </Alert>
+                  </li>
+                ))}
+
                 {otherRecs.map((rec, index) => {
                   let iconColorClass = "#3b82f6"; // blue-500
                   let IconComponent = InfoIcon;
@@ -105,7 +126,7 @@ export default function RecommendationsCard({
                           >
                             {alertTitle}
                           </AlertTitle>
-                          <AlertDescription className="mt-1 text-sm text-muted-foreground">
+                          <AlertDescription className="mt-1 text-sm text-muted-foreground break-words">
                             {rec}
                           </AlertDescription>
                         </div>
@@ -113,34 +134,6 @@ export default function RecommendationsCard({
                     </li>
                   );
                 })}
-
-                {goodPracticeRecs.length > 0 && (
-                  <li key="good-practices">
-                    <Alert className="items-start p-4 border">
-                      <CheckCircle2
-                        className="mt-0.5 h-5 w-5"
-                        style={{ color: "#14b8a6" }} // teal-500
-                      />
-                      <div className="ml-3 flex-1">
-                        <AlertTitle
-                          className="font-semibold"
-                          style={{ color: "#14b8a6" }}
-                        >
-                          Good Practices
-                        </AlertTitle>
-                        <AlertDescription className="mt-1 text-sm text-muted-foreground">
-                          <ScrollArea className="h-full w-full">
-                            <ul className="list-disc pl-5 space-y-1 pr-4">
-                              {goodPracticeRecs.map((rec, i) => (
-                                <li key={`gp-${i}`}>{rec}</li>
-                              ))}
-                            </ul>
-                          </ScrollArea>
-                        </AlertDescription>
-                      </div>
-                    </Alert>
-                  </li>
-                )}
               </ul>
             );
           })()

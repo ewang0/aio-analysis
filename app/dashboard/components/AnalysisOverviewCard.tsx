@@ -41,9 +41,7 @@ export default function AnalysisOverviewCard({
       <CardContent className="space-y-6">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-foreground">
-              Robots.txt AI Optimization Score
-            </h3>
+            <h3 className="text-lg font-semibold text-foreground">AEO Score</h3>
             <div className="relative group">
               <InfoIcon className="h-4 w-4 text-muted-foreground cursor-help" />
               <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-popover text-popover-foreground p-2 rounded shadow-md text-sm w-64 z-50">
@@ -129,7 +127,7 @@ export default function AnalysisOverviewCard({
                       target="_blank"
                       rel="noopener noreferrer"
                       key={i}
-                      className="block text-primary hover:underline"
+                      className="block text-primary hover:underline break-words"
                     >
                       {s}
                     </a>

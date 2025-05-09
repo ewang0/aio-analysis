@@ -37,7 +37,7 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "AIO Analysis",
+          title: "AEO Analysis",
           url: "#",
         },
       ],

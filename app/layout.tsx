@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Optimization (AIO) Analysis Tool",
+  title: "AI Optimization (AEO) Analysis Tool",
   description: "Analyze and optimize your site's robots.txt for AI crawlers.",
 };
 

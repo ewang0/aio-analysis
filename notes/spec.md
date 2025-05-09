@@ -1,6 +1,6 @@
-# AI Optimization (AIO) Analysis Tool
+# AI Optimization (AEO) Analysis Tool
 
-In this assignment, you'll develop an AI Optimization (AIO) Analysis Tool as a web application playground. This tool will allow users to assess how well their site's robots.txt file is optimized for AI-based crawlers, helping them improve their AI optimization strategies.
+In this assignment, you'll develop an AI Optimization (AEO) Analysis Tool as a web application playground. This tool will allow users to assess how well their site's robots.txt file is optimized for AI-based crawlers, helping them improve their AI optimization strategies.
 
 ## Assignment Overview
 
@@ -62,4 +62,4 @@ Currently, the scope is limited to analyzing and recommending improvements to th
 - **Code Quality**: Clean, modular, and maintainable code with appropriate comments and documentation.
 - **Innovation**: Any added features or creative design touches that enhance the tool's usability and functionality.
 
-Feel free to reach out with any questions, and good luck! We look forward to seeing your approach to building an impactful AIO analysis tool.
+Feel free to reach out with any questions, and good luck! We look forward to seeing your approach to building an impactful AEO analysis tool.

@@ -27,7 +27,7 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>AIO Analysis</BreadcrumbPage>
+                <BreadcrumbPage>AEO Analysis</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

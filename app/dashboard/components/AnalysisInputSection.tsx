@@ -31,7 +31,7 @@ export default function AnalysisInputSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">AIO Analysis Tool</CardTitle>
+        <CardTitle className="text-2xl">AEO Analysis Tool</CardTitle>
         <CardDescription>
           Enter a domain or URL to analyze its robots.txt for AI crawler
           optimization.
