@@ -1,10 +1,10 @@
-# AEO Analysis Tool Playground
+# AEO Analysis Tool
 
-<img width="1466" alt="Screenshot 2025-05-08 at 8 59 51 PM" src="https://github.com/user-attachments/assets/17b1b6ca-365f-472c-a578-37d09fd005ab" />
+<img width="1466" alt="Screenshot 2025-05-09 at 12 21 54 AM" src="https://github.com/user-attachments/assets/286d5b4c-fa7e-4309-9d42-579c8be32a69" />
 
 ---
 
-Deployed at: https://aeo-analysis-kohl.vercel.app/dashboard
+Deployed at: https://aio-analysis-kohl.vercel.app/dashboard
 
 This web application allows users to assess how well their site's `robots.txt` file is optimized for AI-based crawlers, helping them improve their AI optimization strategies.
 
